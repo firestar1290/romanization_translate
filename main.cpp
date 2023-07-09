@@ -12,6 +12,7 @@ void initEnJpHMap(std::map<std::string,std::wstring>* );
 void enToH(std::map<std::string,std::wstring>*, std::string*, std::wstring*);
 void enToK(std::map<std::string,std::wstring>*, std::string*, std::wstring*);
 void processText(std::string ,std::string&);
+void hToKan(kanConv*, std::wstring*, std::wstring* );
 
 std::wstring stringtoWString(std::string start){
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
@@ -22,7 +23,7 @@ std::wstring stringtoWString(std::string start){
 
 
 int main(int argc,char** argv){
-    kanConv::init();
+    kanConv kanjiConverter = kanConv();
     std::map<std::string,std::wstring> enJPh;
     std::map<std::string,std::wstring> enJPk;
     initEnJpHMap(&enJPh);
@@ -104,7 +105,7 @@ int main(int argc,char** argv){
                             processText(enT,tempEn); //process the english text into something I can process
                             enToH(&enJPh,&tempEn,&jpHT); //convert to hiragana and store in jpHT
                             enToK(&enJPk,&tempEn,&jpKT); //convert to katakana and store in jpKT
-                            //convert to kanji/hiragana and store in kanT
+                            hToKan(&kanjiConverter, &jpHT, &kanT);
                             tempEn=""; //reset the temp english string
                             jpH.setString(jpHT); //set display string to jpHT
                             jpK.setString(jpKT); //set display string to jpKT
@@ -306,5 +307,12 @@ void processText(std::string in,std::string& out){
 
         i = temp + 1;
         temp = 0xfffffff;
+    }
+}
+
+void hToKan(kanConv* converter, std::wstring input, std::wstring* output){
+    std::vector<kanji> listKanji = converter->posskan(input,converter);
+    for (kanji currkan : listKanji){
+        *output += currkan.character + L"\n";
     }
 }

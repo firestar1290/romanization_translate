@@ -1,8 +1,14 @@
 #include "kanConv.h"
 
-std::vector<kanji> kanConv::posskan(std::wstring input){
+kanConv::kanConv(){
+    for(kanji kan : KAN){
+
+    }
+}
+
+std::vector<kanji> kanConv::posskan(std::wstring input, kanConv* forStat){ //pass self as last param
     std::vector<kanji> onRead,kunRead;
-    for(kanji possible : kan){
+    for(kanji possible : forStat->KAN){
         for (std::wstring reading : possible.getKun()){
             if (reading == input){
                 kunRead.push_back(possible);
@@ -20,9 +26,9 @@ std::vector<kanji> kanConv::posskan(std::wstring input){
     }
     return out;
 } //all possible readings
-std::vector<kanji> kanConv::posskan(std::wstring input, bool mode){
+std::vector<kanji> kanConv::posskan(std::wstring input, bool mode, kanConv* forStat){ //pass self as last param
     std::vector<kanji> out;
-    for (kanji possible : kan){
+    for (kanji possible : forStat->KAN){
         for (std::wstring reading : (mode ? possible.getOn() : possible.getKun())){
             if (reading == input){
                 out.push_back(possible);
