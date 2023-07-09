@@ -3,6 +3,7 @@
 kanji::kanji(std::vector<std::wstring> onReading,std::vector<std::wstring> kunReading, std::wstring character){
     on = onReading;
     kun = kunReading;
+    this->character = character;
 }
 
 void kanji::setOn(std::vector<std::wstring> newReadings){

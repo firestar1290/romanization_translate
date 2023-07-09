@@ -4,7 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/SFML-2.5.1/include"
             ],
             "defines": [
                 "_DEBUG",

@@ -2,17 +2,17 @@
 #include "kanConv.h"
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <Windows.h>
 #include <cstdio>
 #include <locale>
 #include <codecvt>
 #include <SFML/Graphics.hpp>
 
-void initEnJpHMap(std::map<std::string,std::wstring>* );
 void enToH(std::map<std::string,std::wstring>*, std::string*, std::wstring*);
 void enToK(std::map<std::string,std::wstring>*, std::string*, std::wstring*);
 void processText(std::string ,std::string&);
-void hToKan(kanConv*, std::wstring*, std::wstring* );
+void hToKan(kanConv*, std::wstring, std::wstring* );
 
 std::wstring stringtoWString(std::string start){
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
@@ -20,13 +20,101 @@ std::wstring stringtoWString(std::string start){
     return end;
 }
 
-
+std::wofstream debugOutput;
 
 int main(int argc,char** argv){
+    debugOutput.open("debugOutput.txt", std::ofstream::binary | std::ofstream::trunc);
+    debugOutput << L"Hello\n";
+    std::cout << "Start Program\n";
     kanConv kanjiConverter = kanConv();
     std::map<std::string,std::wstring> enJPh;
     std::map<std::string,std::wstring> enJPk;
-    initEnJpHMap(&enJPh);
+    typedef std::pair<std::string,std::wstring> tra;
+    enJPh.insert(tra("a",L"\u3042")); //A-group
+    enJPh.insert(tra("i",L"\u3044"));
+    enJPh.insert(tra("u",L"\u3046"));
+    enJPh.insert(tra("e",L"\u3048"));
+    enJPh.insert(tra("o",L"\u304A"));
+    enJPh.insert(tra("ka",L"\u304B")); //K-group
+    enJPh.insert(tra("ki",L"\u304D"));
+    enJPh.insert(tra("ku",L"\u304F"));
+    enJPh.insert(tra("ke",L"\u3051"));
+    enJPh.insert(tra("ko",L"\u3053"));
+    enJPh.insert(tra("sa",L"\u3055")); //S-Group
+    enJPh.insert(tra("shi",L"\u3057"));
+    enJPh.insert(tra("su",L"\u3059"));
+    enJPh.insert(tra("se",L"\u305B"));
+    enJPh.insert(tra("so",L"\u305D"));
+    enJPh.insert(tra("ta",L"\u305F")); //T-Group
+    enJPh.insert(tra("chi",L"\u3061"));
+    enJPh.insert(tra("tsu",L"\u3064"));
+    enJPh.insert(tra("te",L"\u3066"));
+    enJPh.insert(tra("to",L"\u3068"));
+    enJPh.insert(tra("na",L"\u306A")); //N-Group
+    enJPh.insert(tra("ni",L"\u306b"));
+    enJPh.insert(tra("nu",L"\u306c"));
+    enJPh.insert(tra("ne",L"\u306D"));
+    enJPh.insert(tra("no",L"\u306E"));
+    enJPh.insert(tra("ha",L"\u306f")); //H-Group
+    enJPh.insert(tra("hi",L"\u3072"));
+    enJPh.insert(tra("hu",L"\u3075"));
+    enJPh.insert(tra("he",L"\u3078"));
+    enJPh.insert(tra("ho",L"\u307B"));
+    enJPh.insert(tra("fa",L"\u306f")); //H-Group - F variant
+    enJPh.insert(tra("fi",L"\u3072"));
+    enJPh.insert(tra("fu",L"\u3075"));
+    enJPh.insert(tra("fe",L"\u3078"));
+    enJPh.insert(tra("fo",L"\u307B"));
+    enJPh.insert(tra("ma",L"\u307e")); //M-Group
+    enJPh.insert(tra("mi",L"\u307F"));
+    enJPh.insert(tra("mu",L"\u3080"));
+    enJPh.insert(tra("me",L"\u3081"));
+    enJPh.insert(tra("mo",L"\u3082"));
+    enJPh.insert(tra("ya",L"\u3084")); //Y-group
+    enJPh.insert(tra("yu",L"\u3086"));
+    enJPh.insert(tra("yo",L"\u3088"));
+    enJPh.insert(tra("ra",L"\u3089")); //R-Group
+    enJPh.insert(tra("ri",L"\u308A"));
+    enJPh.insert(tra("ru",L"\u308b"));
+    enJPh.insert(tra("re",L"\u308c"));
+    enJPh.insert(tra("ro",L"\u308D"));
+    enJPh.insert(tra("la",L"\u3089")); //R-Group - L variant
+    enJPh.insert(tra("li",L"\u308A"));
+    enJPh.insert(tra("lu",L"\u308b"));
+    enJPh.insert(tra("le",L"\u308c"));
+    enJPh.insert(tra("lo",L"\u308D"));
+    enJPh.insert(tra("wa",L"\u308f")); //W-Group
+    enJPh.insert(tra("wo",L"\u3092"));
+    enJPh.insert(tra("ga",L"\u304c")); //G-Group
+    enJPh.insert(tra("gi",L"\u304e"));
+    enJPh.insert(tra("gu",L"\u3050"));
+    enJPh.insert(tra("ge",L"\u3052"));
+    enJPh.insert(tra("go",L"\u3054"));
+    enJPh.insert(tra("za",L"\u3056")); //Z-Group
+    enJPh.insert(tra("ji",L"\u3058"));
+    enJPh.insert(tra("zu",L"\u305A"));
+    enJPh.insert(tra("ze",L"\u305c"));
+    enJPh.insert(tra("zo",L"\u305e"));
+    enJPh.insert(tra("da",L"\u3060")); //D-Group
+    enJPh.insert(tra("ji",L"\u3062"));
+    enJPh.insert(tra("zu",L"\u3065"));
+    enJPh.insert(tra("de",L"\u3067"));
+    enJPh.insert(tra("do",L"\u3069"));
+    enJPh.insert(tra("ba",L"\u3070")); //B-Group
+    enJPh.insert(tra("bi",L"\u3073"));
+    enJPh.insert(tra("bu",L"\u3076"));
+    enJPh.insert(tra("be",L"\u3079"));
+    enJPh.insert(tra("bo",L"\u307C"));
+    enJPh.insert(tra("pa",L"\u3071")); //P-Group
+    enJPh.insert(tra("pi",L"\u3074"));
+    enJPh.insert(tra("pu",L"\u3077"));
+    enJPh.insert(tra("pe",L"\u307A"));
+    enJPh.insert(tra("po",L"\u307D"));
+    enJPh.insert(tra("Na",L"\u3093")); //N
+    enJPh.insert(tra("Stsu",L"\u3063")); //small tsu
+    enJPh.insert(tra("Sya",L"\u3083")); //small Y-Group
+    enJPh.insert(tra("Syu",L"\u3085"));
+    enJPh.insert(tra("Syo",L"\u3087"));
     enJPk = enJPh;
     for (auto i = enJPk.begin();i!=enJPk.end();i++){
         i->second = i->second.at(0) + 0x60;
@@ -35,6 +123,7 @@ int main(int argc,char** argv){
     SetConsoleOutputCP(CP_UTF8); //set console to UTF8 encoding
     setvbuf(stdout, nullptr, _IOFBF, 1000); //add buffer to prevent unwanted truncation, remember to flush
     std::wcout.imbue(std::locale(std::locale::classic(),new std::codecvt_utf8_utf16<wchar_t>()));
+    debugOutput.imbue(std::locale(std::locale::classic(),new std::codecvt_utf8_utf16<wchar_t>()));
 
     sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width,sf::VideoMode::getDesktopMode().height),"My Window",sf::Style::Close); //make the window, make sure it is not bigger than the screen
     window.setFramerateLimit(20);
@@ -44,12 +133,17 @@ int main(int argc,char** argv){
     std::wstring jpKT=L""; //internal Katakana
     std::wstring kanT=L""; //internal Kanji
     sf::Font yumin; //font for JP
+    sf::Font jiyuno;
     sf::Text eng; //display English
     sf::Text jpH; //display Hiragana
     sf::Text jpK; //display Katakana
     sf::Text kan; //display Kanji
     if (!yumin.loadFromFile("resrc\\yumin.ttf")){ //load font
         std::cerr << "Japanese font not found\n";
+        return 1;
+    }
+    if (!jiyuno.loadFromFile("resrc\\JiyunoTsubasa.ttf")){
+        std::cerr << "Kanji font not found\n";
         return 1;
     }
     jpH.setFont(yumin); //set font
@@ -62,7 +156,7 @@ int main(int argc,char** argv){
     jpK.setFillColor(sf::Color::White);
     jpK.setPosition(300,150);
 
-    kan.setFont(yumin);
+    kan.setFont(jiyuno);
     kan.setCharacterSize(48);
     kan.setFillColor(sf::Color::White);
     kan.setPosition(300,200);
@@ -105,7 +199,7 @@ int main(int argc,char** argv){
                             processText(enT,tempEn); //process the english text into something I can process
                             enToH(&enJPh,&tempEn,&jpHT); //convert to hiragana and store in jpHT
                             enToK(&enJPk,&tempEn,&jpKT); //convert to katakana and store in jpKT
-                            hToKan(&kanjiConverter, &jpHT, &kanT);
+                            hToKan(&kanjiConverter, jpHT, &kanT); //convert hiragana to kanji and store in kantT
                             tempEn=""; //reset the temp english string
                             jpH.setString(jpHT); //set display string to jpHT
                             jpK.setString(jpKT); //set display string to jpKT
@@ -119,6 +213,7 @@ int main(int argc,char** argv){
                     break;
             }
         }
+        //std::cout << "Hello there\n";
         window.draw(jpH); //draw Hiragana
         window.draw(jpK); //draw Katakana
         window.draw(kan); //draw Kanji
@@ -129,95 +224,7 @@ int main(int argc,char** argv){
         jpKT = L""; //reset internal katakana
         kanT = L""; //reset internal kanji
     }
-}
-
-void initEnJpHMap(std::map<std::string,std::wstring>* enJPh){
-    typedef std::pair<std::string,std::wstring> tra;
-    enJPh->insert(tra("a",L"\u3042")); //A-group
-    enJPh->insert(tra("i",L"\u3044"));
-    enJPh->insert(tra("u",L"\u3046"));
-    enJPh->insert(tra("e",L"\u3048"));
-    enJPh->insert(tra("o",L"\u304A"));
-    enJPh->insert(tra("ka",L"\u304B")); //K-group
-    enJPh->insert(tra("ki",L"\u304D"));
-    enJPh->insert(tra("ku",L"\u304F"));
-    enJPh->insert(tra("ke",L"\u3051"));
-    enJPh->insert(tra("ko",L"\u3053"));
-    enJPh->insert(tra("sa",L"\u3055")); //S-Group
-    enJPh->insert(tra("shi",L"\u3057"));
-    enJPh->insert(tra("su",L"\u3059"));
-    enJPh->insert(tra("se",L"\u305B"));
-    enJPh->insert(tra("so",L"\u305D"));
-    enJPh->insert(tra("ta",L"\u305F")); //T-Group
-    enJPh->insert(tra("chi",L"\u3061"));
-    enJPh->insert(tra("tsu",L"\u3064"));
-    enJPh->insert(tra("te",L"\u3066"));
-    enJPh->insert(tra("to",L"\u3068"));
-    enJPh->insert(tra("na",L"\u306A")); //N-Group
-    enJPh->insert(tra("ni",L"\u306b"));
-    enJPh->insert(tra("nu",L"\u306c"));
-    enJPh->insert(tra("ne",L"\u306D"));
-    enJPh->insert(tra("no",L"\u306E"));
-    enJPh->insert(tra("ha",L"\u306f")); //H-Group
-    enJPh->insert(tra("hi",L"\u3072"));
-    enJPh->insert(tra("hu",L"\u3075"));
-    enJPh->insert(tra("he",L"\u3078"));
-    enJPh->insert(tra("ho",L"\u307B"));
-    enJPh->insert(tra("fa",L"\u306f")); //H-Group - F variant
-    enJPh->insert(tra("fi",L"\u3072"));
-    enJPh->insert(tra("fu",L"\u3075"));
-    enJPh->insert(tra("fe",L"\u3078"));
-    enJPh->insert(tra("fo",L"\u307B"));
-    enJPh->insert(tra("ma",L"\u307e")); //M-Group
-    enJPh->insert(tra("mi",L"\u307F"));
-    enJPh->insert(tra("mu",L"\u3080"));
-    enJPh->insert(tra("me",L"\u3081"));
-    enJPh->insert(tra("mo",L"\u3082"));
-    enJPh->insert(tra("ya",L"\u3084")); //Y-group
-    enJPh->insert(tra("yu",L"\u3086"));
-    enJPh->insert(tra("yo",L"\u3088"));
-    enJPh->insert(tra("ra",L"\u3089")); //R-Group
-    enJPh->insert(tra("ri",L"\u308A"));
-    enJPh->insert(tra("ru",L"\u308b"));
-    enJPh->insert(tra("re",L"\u308c"));
-    enJPh->insert(tra("ro",L"\u308D"));
-    enJPh->insert(tra("la",L"\u3089")); //R-Group - L variant
-    enJPh->insert(tra("li",L"\u308A"));
-    enJPh->insert(tra("lu",L"\u308b"));
-    enJPh->insert(tra("le",L"\u308c"));
-    enJPh->insert(tra("lo",L"\u308D"));
-    enJPh->insert(tra("wa",L"\u308f")); //W-Group
-    enJPh->insert(tra("wo",L"\u3092"));
-    enJPh->insert(tra("ga",L"\u304c")); //G-Group
-    enJPh->insert(tra("gi",L"\u304e"));
-    enJPh->insert(tra("gu",L"\u3050"));
-    enJPh->insert(tra("ge",L"\u3052"));
-    enJPh->insert(tra("go",L"\u3054"));
-    enJPh->insert(tra("za",L"\u3056")); //Z-Group
-    enJPh->insert(tra("ji",L"\u3058"));
-    enJPh->insert(tra("zu",L"\u305A"));
-    enJPh->insert(tra("ze",L"\u305c"));
-    enJPh->insert(tra("zo",L"\u305e"));
-    enJPh->insert(tra("da",L"\u3060")); //D-Group
-    enJPh->insert(tra("ji",L"\u3062"));
-    enJPh->insert(tra("zu",L"\u3065"));
-    enJPh->insert(tra("de",L"\u3067"));
-    enJPh->insert(tra("do",L"\u3069"));
-    enJPh->insert(tra("ba",L"\u3070")); //B-Group
-    enJPh->insert(tra("bi",L"\u3073"));
-    enJPh->insert(tra("bu",L"\u3076"));
-    enJPh->insert(tra("be",L"\u3079"));
-    enJPh->insert(tra("bo",L"\u307C"));
-    enJPh->insert(tra("pa",L"\u3071")); //P-Group
-    enJPh->insert(tra("pi",L"\u3074"));
-    enJPh->insert(tra("pu",L"\u3077"));
-    enJPh->insert(tra("pe",L"\u307A"));
-    enJPh->insert(tra("po",L"\u307D"));
-    enJPh->insert(tra("Na",L"\u3093")); //N
-    enJPh->insert(tra("Stsu",L"\u3063")); //small tsu
-    enJPh->insert(tra("Sya",L"\u3083")); //small Y-Group
-    enJPh->insert(tra("Syu",L"\u3085"));
-    enJPh->insert(tra("Syo",L"\u3087"));
+    debugOutput.close();
 }
 
 void enToH(std::map<std::string,std::wstring>* map, std::string* in, std::wstring* out){
@@ -312,7 +319,16 @@ void processText(std::string in,std::string& out){
 
 void hToKan(kanConv* converter, std::wstring input, std::wstring* output){
     std::vector<kanji> listKanji = converter->posskan(input,converter);
+    std::cout << listKanji.size() << "\n";
     for (kanji currkan : listKanji){
+        debugOutput << L"Kun: " << currkan.getKun(0) << L"\nOn: " << currkan.getOn(0) << L"\nCharacter: " << currkan.character << L"\n";
+        if(debugOutput.fail()){
+            if(debugOutput.bad()){
+                std::cerr << "Write error occured\n";
+            }else{
+                std::cerr << "Logical error on write operation\n";
+            }
+        }
         *output += currkan.character + L"\n";
     }
 }

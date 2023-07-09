@@ -1,11 +1,5 @@
 #include "kanConv.h"
 
-kanConv::kanConv(){
-    for(kanji kan : KAN){
-
-    }
-}
-
 std::vector<kanji> kanConv::posskan(std::wstring input, kanConv* forStat){ //pass self as last param
     std::vector<kanji> onRead,kunRead;
     for(kanji possible : forStat->KAN){

@@ -6,6 +6,8 @@
 			"label": "C/C++: g++.exe build active file",
 			"command": "C:\\MinGW\\bin\\g++.exe",
 			"args": [
+				"kanji.cpp",
+				"kanConv.cpp",
 				"-fdiagnostics-color=always",
 				"-g",
 				"${file}",
