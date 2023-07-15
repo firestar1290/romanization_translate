@@ -23,8 +23,8 @@ std::wstring stringtoWString(std::string start){
 std::wofstream debugOutput;
 
 int main(int argc,char** argv){
-    debugOutput.open("debugOutput.txt", std::ofstream::binary | std::ofstream::trunc);
-    debugOutput << L"Hello\n";
+    //debugOutput.open("//debugOutput.txt", std::ofstream::binary | std::ofstream::trunc);
+    //debugOutput << L"Hello\n";
     std::cout << "Start Program\n";
     kanConv kanjiConverter = kanConv();
     std::map<std::string,std::wstring> enJPh;
@@ -117,10 +117,9 @@ int main(int argc,char** argv){
     enJPh.insert(tra("Syo",L"\u3087"));
     enJPh.insert(tra("SPa",L" ")); //space
     enJPk = enJPh;
-    for (auto i = enJPk.begin();i!=enJPk.end();i++){
+    for (auto i = enJPk.begin();i!=(--enJPk.end());i++){
         i->second = i->second.at(0) + 0x60;
     }
-    (--enJPk.end())->second = (--enJPk.end())->second.at(0) - 0x60;
 
     SetConsoleOutputCP(CP_UTF8); //set console to UTF8 encoding
     setvbuf(stdout, nullptr, _IOFBF, 1000); //add buffer to prevent unwanted truncation, remember to flush
@@ -178,7 +177,7 @@ int main(int argc,char** argv){
         window.clear(); //clear window
         sf::Event event;
         while(window.pollEvent(event)){ //poll an event
-            //debugOutput << L"Event polled\n";
+          //debugOutput << L"Event polled\n";
             switch(event.type){
                 case sf::Event::Closed: //if the event is "Close"
                     window.close();
@@ -197,9 +196,9 @@ int main(int argc,char** argv){
                             break;
                     }
                 case sf::Event::KeyReleased: //when the user releases a key
-                    //debugOutput << L"Start conversion\n";
                     switch(event.key.code){
                         case sf::Keyboard::Enter: //if that key is enter
+                            //debugOutput << L"Start conversion\n";
                             //set internal texts, kanji gonna suck
                             processText(enT,tempEn); //process the english text into something I can process
                             //debugOutput << L"English text processed\n";
@@ -282,7 +281,7 @@ void processText(std::string in,std::string& out){
             temp++;
         }
         subStr = in.substr(i,temp-i+1); //store the relevant sub-string for reference
-        debugOutput << stringtoWString(subStr) << L"\n";
+        //debugOutput << stringtoWString(subStr) << L"\n";
         if (subStr.length() > 1 && subStr.at(0) == subStr.at(1)){ //small tsu
             if (subStr.at(0)=='n'){
                 out+="Na";
@@ -301,7 +300,7 @@ void processText(std::string in,std::string& out){
             if (!vw && subStr.at(1) != 'y'){ //if next char is not vowel
                 out += "Na";
                 subStr = subStr.substr(1); //truncate to get rid of standalone n
-                debugOutput << L"Standalone N taken out: " << stringtoWString(subStr) << L"\n";
+                //debugOutput << L"Standalone N taken out: " << stringtoWString(subStr) << L"\n";
             }
         }
         if(subStr.find(' ') != subStr.npos){
@@ -320,16 +319,16 @@ void processText(std::string in,std::string& out){
                 }
                 out+="SPa";
             }
-        }else if (subStr.at(1) == 'y'){ //small ya,yu,yo
+        }else if (subStr.length() > 1 && subStr.at(1) == 'y'){ //small ya,yu,yo
             tempStr = subStr.at(0);
             tempStr += "iSy";
             tempStr += subStr.back();
             out += tempStr;
-        }else if(subStr.at(0) == 'c' && subStr.at(subStr.length()-1)!='i'){ //if the character is "chi"
+        }else if(subStr.at(0) == 'c' && subStr.back()!='i'){ //if the character is "chi"
             tempStr = "chiSy";
             tempStr += subStr.back();
             out += tempStr;
-        }else if(subStr.at(0) == 'j' && subStr.at(subStr.length()-1)!='i'){ //if the character is ji as small ya,yu,yo does not add a y (ja,ju,jo)
+        }else if(subStr.at(0) == 'j' && subStr.back()!='i'){ //if the character is ji as small ya,yu,yo does not add a y (ja,ju,jo)
             tempStr = "jiSy";
             tempStr += subStr.at(subStr.length()-1);
             out += tempStr;
@@ -343,7 +342,7 @@ void processText(std::string in,std::string& out){
 
         i = temp + 1;
         temp = 0xfffffff;
-        debugOutput << L"Output String at " << i << L": " << stringtoWString(out) << L"\n";
+        //debugOutput << L"Output String at " << i << L": " << stringtoWString(out) << L"\n";
     }
 }
 
@@ -352,8 +351,8 @@ void hToKan(kanConv* converter, std::wstring input, std::wstring* output){
     //debugOutput << listKanji.size() << L"\n";
     for (kanji currkan : listKanji){
         //debugOutput << L"Kun: " << currkan.getKun(0) << L"\nOn: " << currkan.getOn(0) << L"\nCharacter: " << currkan.character << L"\n";
-        //if(debugOutput.fail()){
-            //if(debugOutput.bad()){
+        //if(//debugOutput.fail()){
+            //if(//debugOutput.bad()){
                 //std::cerr << "Write error occured\n";
             //}else{
                 //std::cerr << "Logical error on write operation\n";
