@@ -3,14 +3,7 @@
 kanji::kanji(std::vector<std::wstring> onReading,std::vector<std::wstring> kunReading, std::wstring character){
     on = onReading;
     kun = kunReading;
-}
-
-void kanji::setOn(std::vector<std::wstring> newReadings){
-    on = newReadings;
-}
-
-void kanji::setKun(std::vector<std::wstring> newReadings){
-    kun = newReadings;
+    this->character = character;
 }
 
 std::vector<std::wstring> kanji::getOn(){
@@ -23,7 +16,7 @@ std::vector<std::wstring> kanji::getKun(){
 
 std::wstring kanji::getOn(int ind){
     try{
-        return on[ind];
+        return on.at(ind);
     }catch(std::out_of_range e){
         return L"";
     }
@@ -31,7 +24,7 @@ std::wstring kanji::getOn(int ind){
 
 std::wstring kanji::getKun(int ind){
     try{
-        return kun[ind];
+        return kun.at(ind);
     }catch(std::out_of_range e){
         return L"";
     }
