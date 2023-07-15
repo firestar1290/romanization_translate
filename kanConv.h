@@ -3,10 +3,10 @@
 #include <vector>
 class kanConv{
     public:
-        std::vector<kanji> posskan(std::wstring, kanConv*); //all possible readings
-        std::vector<kanji> posskan(std::wstring, bool, kanConv*); //all possible on/kun readings, true is on false is kun
+        std::vector<kanji> posskan(std::wstring); //all possible readings
+        std::vector<kanji> posskan(std::wstring, bool); //all possible on/kun readings, true is on false is kun
     private:
-        std::vector<kanji> KAN{ //on, kun
+        const std::vector<kanji> KAN{ //on, kun
             kanji(std::vector<std::wstring>{L"だい"},std::vector<std::wstring>{L"おお"},L"大"), //big
             kanji(std::vector<std::wstring>{L"がく",L"がっ"},std::vector<std::wstring>{L"まな"},L"学"), //learn
             kanji(std::vector<std::wstring>{L"こう"},std::vector<std::wstring>{},L"校"), //school

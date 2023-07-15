@@ -115,10 +115,12 @@ int main(int argc,char** argv){
     enJPh.insert(tra("Sya",L"\u3083")); //small Y-Group
     enJPh.insert(tra("Syu",L"\u3085"));
     enJPh.insert(tra("Syo",L"\u3087"));
+    enJPh.insert(tra("SPa",L" ")); //space
     enJPk = enJPh;
     for (auto i = enJPk.begin();i!=enJPk.end();i++){
         i->second = i->second.at(0) + 0x60;
     }
+    (--enJPk.end())->second = (--enJPk.end())->second.at(0) - 0x60;
 
     SetConsoleOutputCP(CP_UTF8); //set console to UTF8 encoding
     setvbuf(stdout, nullptr, _IOFBF, 1000); //add buffer to prevent unwanted truncation, remember to flush
@@ -171,10 +173,12 @@ int main(int argc,char** argv){
     eng.setFillColor(sf::Color::White);
     eng.setPosition(300,50);
 
+    //debugOutput << L"Start main while loop\n";
     while(window.isOpen()){
         window.clear(); //clear window
         sf::Event event;
         while(window.pollEvent(event)){ //poll an event
+            //debugOutput << L"Event polled\n";
             switch(event.type){
                 case sf::Event::Closed: //if the event is "Close"
                     window.close();
@@ -193,13 +197,16 @@ int main(int argc,char** argv){
                             break;
                     }
                 case sf::Event::KeyReleased: //when the user releases a key
+                    //debugOutput << L"Start conversion\n";
                     switch(event.key.code){
                         case sf::Keyboard::Enter: //if that key is enter
                             //set internal texts, kanji gonna suck
                             processText(enT,tempEn); //process the english text into something I can process
+                            //debugOutput << L"English text processed\n";
                             enToH(&enJPh,&tempEn,&jpHT); //convert to hiragana and store in jpHT
                             enToK(&enJPk,&tempEn,&jpKT); //convert to katakana and store in jpKT
                             hToKan(&kanjiConverter, jpHT, &kanT); //convert hiragana to kanji and store in kantT
+                            //debugOutput << L"Hiragana converted to Kanji\n";
                             tempEn=""; //reset the temp english string
                             jpH.setString(jpHT); //set display string to jpHT
                             jpK.setString(jpKT); //set display string to jpKT
@@ -254,12 +261,13 @@ void enToK(std::map<std::string,std::wstring>* map, std::string* in, std::wstrin
 }
 
 void processText(std::string in,std::string& out){
+    //debugOutput << L"Beginning text processing\n";
     char vowels[] = {'a','i','u','e','o'};
     int temp; //temp index
     std::string tempStr; //temp string
     std::string subStr; //sub string of in containing all consonant leading to the next vowel
     for (int i=0; i<in.length();){
-        if (in.substr(i) == "n"){ //if "n" is the entire input string
+        if (in.substr(i) == "n"){ //if "n" is all of what's left of the input string
             out += "Na";
             return;
         }
@@ -270,7 +278,11 @@ void processText(std::string in,std::string& out){
             }
         }
 
+        if(in.at(temp+1 < in.length() ? temp+1 : in.length()-1) == ' ' && (in.at(temp-1 >= 0 ? temp-1 : 0) == ' ' || in.at(temp-2 >= 0 ? temp-2 : 0) == ' ')){
+            temp++;
+        }
         subStr = in.substr(i,temp-i+1); //store the relevant sub-string for reference
+        debugOutput << stringtoWString(subStr) << L"\n";
         if (subStr.length() > 1 && subStr.at(0) == subStr.at(1)){ //small tsu
             if (subStr.at(0)=='n'){
                 out+="Na";
@@ -286,12 +298,29 @@ void processText(std::string in,std::string& out){
                     vw = subStr.at(1) == vowel;
                 }
             }
-            if (!vw){ //if next char is not vowel
+            if (!vw && subStr.at(1) != 'y'){ //if next char is not vowel
                 out += "Na";
                 subStr = subStr.substr(1); //truncate to get rid of standalone n
+                debugOutput << L"Standalone N taken out: " << stringtoWString(subStr) << L"\n";
             }
         }
-        if (subStr.length() > 1 && subStr.at(1) == 'y'){ //small ya,yu,yo
+        if(subStr.find(' ') != subStr.npos){
+            //debugOutput << L"End match being? " << ((subStr.at(0) == subStr.at(subStr.length()-1)) ? L"yes\n" : L"no\n");
+            if ((subStr.at(0) == subStr.at(subStr.length()-1))){
+                out+="SPa";
+                subStr = subStr.substr(1,subStr.length()-2);
+                if (subStr == "e"){
+                    out += "he";
+                }else if(subStr == "o"){
+                    out += "wo";
+                }else if (subStr == "wa"){
+                    out += "ha";
+                }else{
+                    out+= subStr;
+                }
+                out+="SPa";
+            }
+        }else if (subStr.at(1) == 'y'){ //small ya,yu,yo
             tempStr = subStr.at(0);
             tempStr += "iSy";
             tempStr += subStr.back();
@@ -314,21 +343,22 @@ void processText(std::string in,std::string& out){
 
         i = temp + 1;
         temp = 0xfffffff;
+        debugOutput << L"Output String at " << i << L": " << stringtoWString(out) << L"\n";
     }
 }
 
 void hToKan(kanConv* converter, std::wstring input, std::wstring* output){
-    std::vector<kanji> listKanji = converter->posskan(input,converter);
-    std::cout << listKanji.size() << "\n";
+    std::vector<kanji> listKanji = converter->posskan(input);
+    //debugOutput << listKanji.size() << L"\n";
     for (kanji currkan : listKanji){
-        debugOutput << L"Kun: " << currkan.getKun(0) << L"\nOn: " << currkan.getOn(0) << L"\nCharacter: " << currkan.character << L"\n";
-        if(debugOutput.fail()){
-            if(debugOutput.bad()){
-                std::cerr << "Write error occured\n";
-            }else{
-                std::cerr << "Logical error on write operation\n";
-            }
-        }
+        //debugOutput << L"Kun: " << currkan.getKun(0) << L"\nOn: " << currkan.getOn(0) << L"\nCharacter: " << currkan.character << L"\n";
+        //if(debugOutput.fail()){
+            //if(debugOutput.bad()){
+                //std::cerr << "Write error occured\n";
+            //}else{
+                //std::cerr << "Logical error on write operation\n";
+            //}
+        //}
         *output += currkan.character + L"\n";
     }
 }
